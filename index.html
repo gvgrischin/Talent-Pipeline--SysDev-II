@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👥</text></svg>">
+<meta name="description" content="Internal talent pipeline tracker">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talent Pipeline</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👥</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Epilogue:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ede9e1;
+  --surface: #faf8f4;
+  --surface2: #f0ece6;
+  --surface3: #e6e0d6;
+  --border: #d8d0c4;
+  --border2: #c0b8a8;
+  --text: #2c2820;
+  --text2: #6a6058;
+  --text3: #a09488;
+  --accent: #7a6248;
+  --accent2: #a08060;
+  --accent-bg: rgba(122,98,72,0.08);
+  --green: #4a7c5e;
+  --green-bg: rgba(74,124,94,0.1);
+  --red: #a04848;
+  --red-bg: rgba(160,72,72,0.1);
+  --blue: #4a6e8c;
+  --blue-bg: rgba(74,110,140,0.1);
+  --purple: #6e5a8c;
+  --purple-bg: rgba(110,90,140,0.1);
+  --orange: #8c6030;
+  --orange-bg: rgba(140,96,48,0.1);
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+body {
+  font-family: 'Epilogue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── HEADER ─── */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.wordmark {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wordmark-dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+header {
+  box-shadow: 0 1px 0 var(--border);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: none;
+  color: var(--text2);
+  letter-spacing: 0.04em;
+  transition: all 0.15s;
+}
+.btn:hover { background: var(--surface3); color: var(--text); border-color: var(--border2); }
+
+.btn-accent {
+  background: var(--accent);
+  color: #0f0e0c;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.btn-accent:hover { background: #d4b87a; color: #0f0e0c; border-color: #d4b87a; }
+
+/* ─── STATS ─── */
+.stats-bar {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.stat {
+  flex: 1;
+  padding: 14px 20px;
+  border-right: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.stat:last-child { border-right: none; }
+
+.stat-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+/* ─── BOARD ─── */
+.board-wrap {
+  padding: 1.5rem 1.5rem 2rem;
+  overflow-x: auto;
+}
+
+.board {
+  display: flex;
+  gap: 12px;
+  min-width: max-content;
+  align-items: flex-start;
+}
+
+.col {
+  width: 210px;
+  flex-shrink: 0;
+}
+
+.col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  margin-bottom: 10px;
+}
+
+.col-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.col-badge {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  color: var(--text3);
+  background: var(--surface2);
+  padding: 1px 8px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+.col-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 13px 14px;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+  animation: cardIn 0.25s ease;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.card-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.card-role {
+  font-size: 11px;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+
+.card-notes {
+  font-size: 10.5px;
+  color: var(--text3);
+  font-style: italic;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  border-left: 2px solid var(--border);
+  padding-left: 8px;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.tag {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.tag-github     { background: var(--surface3); color: var(--text2); border: 1px solid var(--border2); }
+.tag-referral   { background: var(--green-bg); color: var(--green); border: 1px solid rgba(90,158,122,0.2); }
+.tag-reddit     { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(192,122,64,0.2); }
+.tag-discord    { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(138,110,192,0.2); }
+.tag-event      { background: var(--green-bg); color: var(--green); border: 1px solid rgba(90,158,122,0.2); }
+.tag-university { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(94,143,192,0.2); }
+.tag-stackoverflow { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(192,122,64,0.2); }
+.tag-workday    { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(94,143,192,0.2); }
+.tag-resume     { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(200,169,110,0.2); }
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.ic-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text3);
+  font-size: 12px;
+  padding: 3px 5px;
+  border-radius: 4px;
+  transition: color 0.1s, background 0.1s;
+  line-height: 1;
+}
+.ic-btn:hover { color: var(--text); background: var(--surface3); }
+.ic-btn.del:hover { color: var(--red); background: var(--red-bg); }
+
+/* ─── ADD BUTTON ─── */
+.add-btn {
+  width: 100%;
+  padding: 9px 12px;
+  font-family: 'Epilogue', sans-serif;
+  font-size: 11px;
+  color: var(--text3);
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  margin-top: 2px;
+}
+.add-btn:hover { color: var(--text2); border-color: var(--border2); background: var(--surface2); }
+
+/* ─── DROP ZONE ─── */
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--surface2);
+  margin-top: 2px;
+}
+.drop-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.drop-zone-icon { font-size: 22px; margin-bottom: 6px; }
+.drop-zone-text { font-size: 11px; color: var(--text3); line-height: 1.6; }
+.drop-zone-text strong { color: var(--accent); font-weight: 500; }
+.drop-zone input { display: none; }
+
+/* ─── PARSING CARD ─── */
+.parsing-card {
+  background: var(--surface);
+  border: 1px solid var(--accent2);
+  border-radius: var(--radius-lg);
+  padding: 13px 14px;
+  animation: pulse 1.5s ease infinite;
+}
+@keyframes pulse {
+  0%, 100% { border-color: var(--accent2); }
+  50% { border-color: var(--accent); }
+}
+.parsing-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  color: var(--accent);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.spinner {
+  width: 10px; height: 10px;
+  border: 1.5px solid var(--accent2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.parsing-file { font-size: 10px; color: var(--text3); font-style: italic; }
+
+/* ─── EMPTY ─── */
+.empty-col {
+  font-size: 10.5px;
+  color: var(--text3);
+  text-align: center;
+  padding: 14px 0;
+  font-style: italic;
+}
+
+/* ─── MODALS ─── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(40,32,24,0.35);
+  backdrop-filter: blur(3px);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  width: 380px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  animation: modalIn 0.2s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: var(--text);
+}
+
+.field { margin-bottom: 12px; }
+
+.field label {
+  display: block;
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  font-family: 'Epilogue', sans-serif;
+  font-size: 13px;
+  padding: 9px 11px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  background: var(--surface2);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus { border-color: var(--accent); }
+.field textarea { resize: vertical; min-height: 70px; }
+.field select option { background: var(--surface2); }
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 1.5rem;
+}
+.modal-actions .btn { flex: 1; text-align: center; }
+
+/* Export */
+.export-area {
+  font-family: 'Syne', monospace;
+  font-size: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  width: 100%;
+  height: 180px;
+  resize: none;
+  color: var(--text2);
+  outline: none;
+  margin-top: 8px;
+}
+
+/* Resume viewer modal */
+.resume-modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  width: 860px;
+  max-width: 96vw;
+  height: 88vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  animation: modalIn 0.2s ease;
+  overflow: hidden;
+}
+.resume-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.resume-modal-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.resume-modal-sub {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 1px;
+}
+.resume-modal-actions { display: flex; align-items: center; gap: 8px; }
+.resume-frame { flex: 1; width: 100%; border: none; background: var(--surface2); }
+
+/* Storage bar */
+.storage-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 2rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--text3);
+  font-family: 'Syne', sans-serif;
+}
+.storage-track {
+  width: 80px; height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.storage-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+.storage-fill.warn { background: var(--red); }
+
+/* View resume button */
+.btn-resume {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 6px;
+  display: inline-block;
+}
+.btn-resume:hover { background: var(--accent-bg); border-color: var(--accent); }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--text);
+  z-index: 200;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.2s;
+  pointer-events: none;
+  font-family: 'Syne', sans-serif;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.toast.success { border-color: var(--green); color: var(--green); }
+.toast.error   { border-color: var(--red);   color: var(--red); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wordmark">
+    <div class="wordmark-dot"></div>
+    <span id="pipeline-title" onclick="editTitle()" title="Click to edit" style="cursor:pointer; border-bottom: 1px dashed transparent; transition: border-color 0.15s;" onmouseover="this.style.borderBottomColor='var(--border2)'" onmouseout="this.style.borderBottomColor='transparent'">TALENT PIPELINE</span>
+  </div>
+  <div class="header-right">
+    <button class="btn" onclick="openExport()">Export CSV</button>
+    <button class="btn btn-accent" onclick="openModal('sourced')">+ Add candidate</button>
+  </div>
+</header>
+
+<div class="stats-bar" id="stats-bar"></div>
+<div class="storage-bar" id="storage-bar"></div>
+
+<div class="board-wrap">
+  <div class="board" id="board"></div>
+</div>
+
+<!-- Manual Add/Edit Modal -->
+<div class="overlay" id="modal-overlay">
+  <div class="modal">
+    <h2 id="modal-heading">Add Candidate</h2>
+    <div class="field"><label>Name</label><input id="f-name" placeholder="Alex Kim" /></div>
+    <div class="field"><label>Role</label><input id="f-role" placeholder="Frontend Engineer" /></div>
+    <div class="field"><label>Source</label>
+      <select id="f-source">
+        <option value="resume">Resume Upload</option>
+        <option value="github">GitHub</option>
+        <option value="referral">Referral</option>
+        <option value="reddit">Reddit</option>
+        <option value="discord">Discord</option>
+        <option value="event">Event / Meetup</option>
+        <option value="university">University</option>
+        <option value="stackoverflow">Stack Overflow</option>
+        <option value="workday">Workday</option>
+      </select>
+    </div>
+    <div class="field"><label>Profile / Portfolio URL</label><input id="f-url" placeholder="https://github.com/..." /></div>
+    <div class="field"><label>Notes</label><textarea id="f-notes" placeholder="Any context, key skills, referrer..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-accent" id="modal-save-btn" onclick="saveCandidate()">Add Candidate</button>
+    </div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="overlay" id="export-overlay">
+  <div class="modal">
+    <h2>Export CSV</h2>
+    <p style="font-size:11px;color:var(--text3);margin-bottom:4px;">Copy and paste into Excel or Google Sheets.</p>
+    <textarea class="export-area" id="export-area" readonly></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeExport()">Close</button>
+      <button class="btn btn-accent" onclick="copyCSV()">Copy to Clipboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- Resume Viewer Modal -->
+<div class="overlay" id="resume-overlay">
+  <div class="resume-modal">
+    <div class="resume-modal-header">
+      <div>
+        <div class="resume-modal-title" id="resume-modal-name">Resume</div>
+        <div class="resume-modal-sub" id="resume-modal-role"></div>
+      </div>
+      <div class="resume-modal-actions">
+        <a id="resume-download-btn" class="btn" download style="text-decoration:none">Download</a>
+        <button class="btn" onclick="closeResumeViewer()">Close</button>
+      </div>
+    </div>
+    <iframe class="resume-frame" id="resume-frame" title="Resume viewer"></iframe>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const COLS = [
+  { id: 'sourced',   label: 'Sourced' },
+  { id: 'contacted', label: 'Contacted' },
+  { id: 'screening', label: 'Screening' },
+  { id: 'interview', label: 'Interview' },
+  { id: 'offer',     label: 'Offer' },
+  { id: 'hired',     label: 'Hired' },
+];
+const COL_IDS = COLS.map(c => c.id);
+
+const SOURCE_LABELS = {
+  github: 'GitHub', referral: 'Referral', reddit: 'Reddit',
+  discord: 'Discord', event: 'Event', university: 'University',
+  stackoverflow: 'Stack Overflow', workday: 'Workday', resume: 'Resume'
+};
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let data = loadData();
+let nextId = loadNextId();
+let addingToCol = null;
+let editingId = null;
+let parsingQueue = {}; // colId -> count of parsing placeholders
+
+// ── PERSISTENCE ──────────────────────────────────────────────────────────────
+function loadData() {
+  try {
+    const s = localStorage.getItem('pipeline_v2_data');
+    if (s) return JSON.parse(s);
+  } catch(e) {}
+  return {
+    sourced: [
+      { id:1, name:'Jordan Lee', role:'Backend Engineer', source:'github', url:'', notes:'Active OSS contributor, Python & Go', date: today() },
+      { id:2, name:'Sam Rivera', role:'Data Engineer', source:'reddit', url:'', notes:'', date: today() },
+    ],
+    contacted: [
+      { id:3, name:'Morgan Patel', role:'Frontend Dev', source:'discord', url:'', notes:'React community – strong portfolio', date: today() },
+    ],
+    screening: [
+      { id:4, name:'Casey Wu', role:'Full Stack', source:'referral', url:'', notes:'Via Nia on eng team', date: today() },
+    ],
+    interview: [], offer: [], hired: []
+  };
+}
+function loadNextId() {
+  try { return parseInt(localStorage.getItem('pipeline_v2_nextid') || '10'); } catch(e) { return 10; }
+}
+function save() {
+  try {
+    localStorage.setItem('pipeline_v2_data', JSON.stringify(data));
+    localStorage.setItem('pipeline_v2_nextid', String(nextId));
+    updateStorageBar();
+  } catch(e) {}
+}
+
+// ── RESUME STORAGE ────────────────────────────────────────────────────────────
+function saveResume(id, base64) {
+  try {
+    localStorage.setItem('resume_' + id, base64);
+    for (const colId of COL_IDS) {
+      const card = data[colId].find(c => c.id === id);
+      if (card) { card.hasResume = true; break; }
+    }
+    updateStorageBar();
+  } catch(e) {
+    showToast('Storage full — resume not saved. Delete old candidates to free space.', 'error');
+  }
+}
+function loadResume(id) {
+  try { return localStorage.getItem('resume_' + id); } catch(e) { return null; }
+}
+
+function deleteResume(id) {
+  try {
+    localStorage.removeItem('resume_' + id);
+    for (const colId of COL_IDS) {
+      const card = data[colId].find(c => c.id === id);
+      if (card) { delete card.hasResume; break; }
+    }
+    updateStorageBar();
+  } catch(e) {}
+}
+
+function updateStorageBar() {
+  try {
+    let total = 0;
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) total += (localStorage[key].length * 2);
+    }
+    const mb = (total / 1024 / 1024).toFixed(1);
+    const pct = Math.min(100, Math.round(total / (5 * 1024 * 1024) * 100));
+    const bar = document.getElementById('storage-bar');
+    if (bar) {
+      bar.innerHTML = `
+        <span>Resume storage:</span>
+        <div class="storage-track"><div class="storage-fill ${pct > 80 ? 'warn' : ''}" style="width:${pct}%"></div></div>
+        <span>${mb} MB / ~5 MB ${pct > 80 ? '⚠ Nearly full' : ''}</span>
+      `;
+    }
+  } catch(e) {}
+}
+
+function openResumeViewer(id, name, role) {
+  const b64 = loadResume(id);
+  if (!b64) { showToast('No resume stored for this candidate', 'error'); return; }
+  document.getElementById('resume-modal-name').textContent = name;
+  document.getElementById('resume-modal-role').textContent = role;
+  try {
+    const bytes = atob(b64);
+    const arr = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+    const blob = new Blob([arr], { type: 'application/pdf' });
+    const blobUrl = URL.createObjectURL(blob);
+    const frame = document.getElementById('resume-frame');
+    if (frame._blobUrl) URL.revokeObjectURL(frame._blobUrl);
+    frame._blobUrl = blobUrl;
+    frame.src = blobUrl;
+    const dl = document.getElementById('resume-download-btn');
+    dl.href = blobUrl;
+    dl.download = name.replace(/\s+/g, '_') + '_resume.pdf';
+  } catch(e) {
+    showToast('Could not display resume — try downloading instead', 'error');
+  }
+  document.getElementById('resume-overlay').classList.add('open');
+}
+
+function closeResumeViewer() {
+  document.getElementById('resume-overlay').classList.remove('open');
+  setTimeout(() => {
+    const frame = document.getElementById('resume-frame');
+    if (frame._blobUrl) { URL.revokeObjectURL(frame._blobUrl); frame._blobUrl = null; }
+    frame.src = '';
+  }, 300);
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+function render() {
+  renderStats();
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  COLS.forEach(col => {
+    const cards = data[col.id] || [];
+    const isLast = col.id === 'hired';
+    const div = document.createElement('div');
+    div.className = 'col';
+
+    const parsing = parsingQueue[col.id] || 0;
+    const parsingHTML = Array.from({length: parsing}, () => `
+      <div class="parsing-card">
+        <div class="parsing-label"><div class="spinner"></div> Reading resume…</div>
+        <div class="parsing-file">Extracting candidate details…</div>
+      </div>
+    `).join('');
+
+    div.innerHTML = `
+      <div class="col-head">
+        <span class="col-name">${col.label}</span>
+        <span class="col-badge">${cards.length + parsing}</span>
+      </div>
+      <div class="col-body" id="col-${col.id}">
+        ${cards.length === 0 && !parsing ? '<div class="empty-col">No candidates yet</div>' : ''}
+        ${parsingHTML}
+        ${cards.map(c => `
+          <div class="card">
+            <div class="card-name">${esc(c.name)}</div>
+            <div class="card-role">${esc(c.role)}</div>
+            ${c.notes ? `<div class="card-notes">${esc(c.notes)}</div>` : ''}
+            <div class="card-footer">
+              <span class="tag tag-${c.source}">${SOURCE_LABELS[c.source] || c.source}</span>
+              <div class="card-actions">
+                ${c.url ? `<a href="${esc(c.url)}" target="_blank" class="ic-btn" title="Open profile" style="text-decoration:none">↗</a>` : ''}
+                <button class="ic-btn" onclick="editCard(${c.id})" title="Edit">✎</button>
+                ${!isLast ? `<button class="ic-btn" onclick="advanceCard(${c.id})" title="Advance stage">→</button>` : ''}
+                <button class="ic-btn del" onclick="deleteCard(${c.id})" title="Delete">✕</button>
+              </div>
+            </div>
+            ${localStorage.getItem('resume_' + c.id) ? `<button class="btn-resume" onclick="openResumeViewer(${c.id}, '${esc(c.name)}', '${esc(c.role)}')">📄 View Resume</button>` : ''}
+          </div>
+        `).join('')}
+        <div class="drop-zone" id="dz-${col.id}"
+          ondragover="handleDragOver(event,'${col.id}')"
+          ondragleave="handleDragLeave(event,'${col.id}')"
+          ondrop="handleDrop(event,'${col.id}')">
+          <input type="file" accept=".pdf" multiple id="fi-${col.id}" onchange="handleFileInput(event,'${col.id}')">
+          <div class="drop-zone-icon">📄</div>
+          <div class="drop-zone-text">
+            <strong>Drop resume PDF</strong><br>
+            or <span style="color:var(--accent);cursor:pointer;text-decoration:underline" onclick="document.getElementById('fi-${col.id}').click()">click to upload</span>
+          </div>
+        </div>
+        <button class="add-btn" onclick="openModal('${col.id}')">+ Add candidate</button>
+      </div>
+    `;
+    board.appendChild(div);
+  });
+}
+
+function renderStats() {
+  const all = COL_IDS.flatMap(id => data[id] || []);
+  const hired = (data.hired||[]).length;
+  const sources = {};
+  all.forEach(c => sources[c.source] = (sources[c.source]||0)+1);
+  const top = Object.entries(sources).sort((a,b)=>b[1]-a[1])[0];
+  const rate = all.length ? Math.round(hired/all.length*100) : 0;
+  document.getElementById('stats-bar').innerHTML = [
+    { v: all.length, l: 'Total' },
+    { v: all.length - hired, l: 'In Pipeline' },
+    { v: hired, l: 'Hired' },
+    { v: rate+'%', l: 'Hire Rate' },
+    { v: top ? SOURCE_LABELS[top[0]] : '—', l: 'Top Source' },
+  ].map(s=>`<div class="stat"><div class="stat-val">${s.v}</div><div class="stat-label">${s.l}</div></div>`).join('');
+}
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── DRAG & DROP ──────────────────────────────────────────────────────────────
+function handleDragOver(e, colId) {
+  e.preventDefault();
+  document.getElementById('dz-'+colId).classList.add('drag-over');
+}
+function handleDragLeave(e, colId) {
+  document.getElementById('dz-'+colId).classList.remove('drag-over');
+}
+function handleDrop(e, colId) {
+  e.preventDefault();
+  document.getElementById('dz-'+colId).classList.remove('drag-over');
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+  if (!files.length) { showToast('Please drop a PDF file', 'error'); return; }
+  files.forEach(f => parseResume(f, colId));
+}
+function handleFileInput(e, colId) {
+  const files = Array.from(e.target.files);
+  files.forEach(f => parseResume(f, colId));
+  e.target.value = '';
+}
+
+// ── RESUME PARSING ───────────────────────────────────────────────────────────
+async function parseResume(file, colId) {
+  // Step 1: Read file immediately — store resume FIRST before any API call
+  let base64;
+  try {
+    base64 = await fileToBase64(file);
+  } catch(e) {
+    showToast('Could not read file', 'error');
+    return;
+  }
+
+  // Step 2: Add card to board right away with filename as placeholder
+  parsingQueue[colId] = (parsingQueue[colId] || 0) + 1;
+  render();
+
+  const newId = nextId++;
+  const placeholderName = file.name.replace(/\.pdf$/i, '');
+
+  // Step 3: Save resume to localStorage immediately — before API call
+  try {
+    localStorage.setItem('resume_' + newId, base64);
+    updateStorageBar();
+  } catch(e) {
+    showToast('Storage full — could not save resume file', 'error');
+  }
+
+  // Step 4: Try to parse with AI (may fail if offline or CORS)
+  let parsed = null;
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: base64 } },
+            { type: 'text', text: 'Extract candidate info from this resume. Return ONLY valid JSON, no markdown:\n{\n  "name": "Full Name",\n  "role": "Most recent job title (specific)",\n  "notes": "2-3 sentence recruiter summary: key skills, years of experience, standout achievements.",\n  "url": ""\n}' }
+          ]
+        }]
+      })
+    });
+    if (response.ok) {
+      const result = await response.json();
+      const raw = result.content.find(b => b.type === 'text')?.text || '{}';
+      const clean = raw.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(clean);
+    }
+  } catch(e) {
+    // API unavailable — that's fine, card still gets added with filename
+  }
+
+  // Step 5: Add the card with parsed data or filename fallback
+  parsingQueue[colId] = Math.max(0, (parsingQueue[colId] || 0) - 1);
+  data[colId].push({
+    id: newId,
+    name: (parsed && parsed.name) ? parsed.name : placeholderName,
+    role: (parsed && parsed.role) ? parsed.role : 'Role TBD',
+    source: 'resume',
+    url: (parsed && parsed.url) ? parsed.url : '',
+    notes: (parsed && parsed.notes) ? parsed.notes : 'Edit to add notes.',
+    date: today()
+  });
+
+  save();
+  render();
+  showToast(parsed ? `✓ ${parsed.name || placeholderName} added` : `✓ ${placeholderName} added — edit to fill details`, 'success');
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── CARD ACTIONS ─────────────────────────────────────────────────────────────
+function advanceCard(id) {
+  for (let i = 0; i < COL_IDS.length - 1; i++) {
+    const idx = data[COL_IDS[i]].findIndex(c => c.id === id);
+    if (idx !== -1) {
+      const [card] = data[COL_IDS[i]].splice(idx, 1);
+      data[COL_IDS[i+1]].push(card);
+      save(); render(); return;
+    }
+  }
+}
+
+function deleteCard(id) {
+  for (const colId of COL_IDS) {
+    const idx = data[colId].findIndex(c => c.id === id);
+    if (idx !== -1) {
+      data[colId].splice(idx, 1);
+      deleteResume(id);
+      save(); render(); return;
+    }
+  }
+}
+
+function editCard(id) {
+  const card = COL_IDS.flatMap(c => data[c]).find(c => c.id === id);
+  if (!card) return;
+  editingId = id; addingToCol = null;
+  document.getElementById('modal-heading').textContent = 'Edit Candidate';
+  document.getElementById('modal-save-btn').textContent = 'Save Changes';
+  document.getElementById('f-name').value = card.name;
+  document.getElementById('f-role').value = card.role;
+  document.getElementById('f-source').value = card.source;
+  document.getElementById('f-url').value = card.url || '';
+  document.getElementById('f-notes').value = card.notes || '';
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('f-name').focus();
+}
+
+// ── MODALS ───────────────────────────────────────────────────────────────────
+function openModal(colId) {
+  addingToCol = colId; editingId = null;
+  document.getElementById('modal-heading').textContent = `Add to ${COLS.find(c=>c.id===colId).label}`;
+  document.getElementById('modal-save-btn').textContent = 'Add Candidate';
+  ['f-name','f-role','f-url','f-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-source').value = 'github';
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('f-name').focus();
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+function saveCandidate() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { document.getElementById('f-name').focus(); return; }
+  const entry = {
+    name,
+    role: document.getElementById('f-role').value.trim() || 'Role TBD',
+    source: document.getElementById('f-source').value,
+    url: document.getElementById('f-url').value.trim(),
+    notes: document.getElementById('f-notes').value.trim(),
+  };
+  if (editingId !== null) {
+    for (const colId of COL_IDS) {
+      const idx = data[colId].findIndex(c => c.id === editingId);
+      if (idx !== -1) { data[colId][idx] = { ...data[colId][idx], ...entry }; break; }
+    }
+  } else {
+    data[addingToCol].push({ id: nextId++, ...entry, date: today() });
+  }
+  save(); closeModal(); render();
+}
+
+function openExport() {
+  const rows = [['Name','Role','Source','Stage','URL','Notes','Date Added']];
+  COLS.forEach(col => {
+    (data[col.id]||[]).forEach(c => {
+      rows.push([c.name, c.role, SOURCE_LABELS[c.source]||c.source, col.label, c.url||'', c.notes||'', c.date||'']);
+    });
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  document.getElementById('export-area').value = csv;
+  document.getElementById('export-overlay').classList.add('open');
+}
+function closeExport() { document.getElementById('export-overlay').classList.remove('open'); }
+function copyCSV() {
+  document.getElementById('export-area').select();
+  document.execCommand('copy');
+  showToast('Copied to clipboard', 'success');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ── KEYBOARD / CLICK OUTSIDE ──────────────────────────────────────────────────
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+document.getElementById('export-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('export-overlay')) closeExport();
+});
+document.getElementById('resume-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('resume-overlay')) closeResumeViewer();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeExport(); closeResumeViewer(); }
+  if (e.key === 'Enter' && document.getElementById('modal-overlay').classList.contains('open')) {
+    if (document.activeElement.tagName !== 'TEXTAREA') saveCandidate();
+  }
+});
+
+
+// ── EDITABLE TITLE ────────────────────────────────────────────────────────────
+function editTitle() {
+  const el = document.getElementById('pipeline-title');
+  const current = el.textContent;
+  const input = document.createElement('input');
+  input.value = current;
+  input.style.cssText = 'font-family:Syne,sans-serif;font-size:15px;font-weight:700;letter-spacing:0.05em;color:var(--text);background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:2px 8px;width:160px;outline:none;';
+  el.replaceWith(input);
+  input.focus();
+  input.select();
+  function commit() {
+    const val = input.value.trim() || 'PIPELINE';
+    const span = document.createElement('span');
+    span.id = 'pipeline-title';
+    span.textContent = val;
+    span.onclick = editTitle;
+    span.title = 'Click to edit';
+    span.style.cssText = 'cursor:pointer;border-bottom:1px dashed transparent;transition:border-color 0.15s;';
+    span.onmouseover = () => span.style.borderBottomColor = 'var(--border2)';
+    span.onmouseout  = () => span.style.borderBottomColor = 'transparent';
+    input.replaceWith(span);
+    try { localStorage.setItem('pipeline_title', val); } catch(e) {}
+  }
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); if (e.key === 'Escape') { input.value = current; input.blur(); } });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+render();
+updateStorageBar();
+try {
+  const savedTitle = localStorage.getItem('pipeline_title');
+  document.getElementById('pipeline-title').textContent = savedTitle || 'TALENT PIPELINE';
+} catch(e) {}
+</script>
+</body>
+</html>
